@@ -11,13 +11,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@auth/express": "^0.6.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "mongodb": "^6.9.0"
+    "express-session": "^1.18.0",
+    "mongodb": "^6.9.0",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
     "@types/node": "^22.5.5",
+    "@types/passport-facebook": "^3.0.3",
+    "@types/passport-google-oauth20": "^2.0.16",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.2"
   }
