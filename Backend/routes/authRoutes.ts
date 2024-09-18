@@ -10,7 +10,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req: Request, res: Response) => {
     console.log("User authenticated successfully:", req.user);
-    res.redirect("/dashboard");
+    res.redirect("/api/recipes");
   }
 );
 
@@ -21,7 +21,7 @@ router.get(
   "/facebook/callback",
   passport.authenticate("facebook", { failureRedirect: "/" }),
   (req: Request, res: Response) => {
-    res.redirect("/dashboard");
+    res.redirect("/api/recipes");
   }
 );
 

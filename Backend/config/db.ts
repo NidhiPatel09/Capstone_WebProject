@@ -1,27 +1,27 @@
-import { MongoClient, Db } from "mongodb";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { MongoClient, Db } from 'mongodb';
 
 let db: Db;
-
-const mongoURI = process.env.MONGODB_URI as string;
+let client: MongoClient; // Keep a reference to the MongoClient
 
 export const connectDB = async (): Promise<Db> => {
-  try {
-    const client = await MongoClient.connect(mongoURI);
-    db = client.db("Recipe");
-    console.log("Connected to MongoDB, Database:", db.databaseName);
-    return db;
-  } catch (err) {
-    console.error("Failed to connect to MongoDB", err);
-    throw err;
-  }
+  client = new MongoClient(process.env.MONGODB_URI as string,);
+
+  await client.connect();
+  db = client.db('Recipe');
+  console.log('Connected to MongoDB');
+  return db;
 };
 
 export const getDB = (): Db => {
   if (!db) {
-    throw new Error("Database not initialized. Call connectDB first.");
+    throw new Error('Database not initialized. Call connectDB first.');
   }
   return db;
+};
+
+export const closeDB = async (): Promise<void> => {
+  if (client) { // Close the MongoClient instance, not Db
+    await client.close();
+    console.log('MongoDB connection closed');
+  }
 };
