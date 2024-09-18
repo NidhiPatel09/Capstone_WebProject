@@ -1,27 +1,47 @@
-import dotenv from "dotenv";
 import express, { Application } from "express";
-import { connectDB } from "./config/db";
-import recipeRoutes from "./routes/recipeRoutes";
+import session from "express-session";
+import dotenv from "dotenv";
+import { initializePassport } from "./config/auth";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import recipeRoutes from "./routes/recipeRoutes";
+import { connectDB } from "./config/db";
 
 dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 5000;
 
+// Session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// Initialize passport and session
+initializePassport(app);
+
 // Middleware to parse JSON
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB();
-
-// Recipe routes
+// Routes
+app.use("/auth", authRoutes);
+app.use("/user", userRoutes);  
 app.use("/api", recipeRoutes);
 
-// Future authentication routes
-app.use("/auth", authRoutes);
+// Connect to MongoDB and start the server
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to the database", error);
+  });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}/api/recipes`);
-});
+  
+  export default app;

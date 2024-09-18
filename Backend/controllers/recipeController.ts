@@ -4,7 +4,7 @@ import { getRecipes, getRecipeById } from "../models/recipeModel";
 export const fetchRecipes = async (req: Request, res: Response): Promise<void> => {
   try {
     const recipes = await getRecipes(10);
-    res.json(recipes); // No need to return here
+    res.json(recipes); 
   } catch (error) {
     console.error("Error fetching recipes:", error);
     const errMessage = error instanceof Error ? error.message : 'Unknown error';  
