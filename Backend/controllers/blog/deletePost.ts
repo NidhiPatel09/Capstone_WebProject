@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../../types/customTypes";
 import { deleteBlogPost } from "../../services/blog/deleteBlogPost";
-import { ObjectId } from "mongodb";
 
 export const deletePost = async (
   req: Request,
@@ -10,9 +9,8 @@ export const deletePost = async (
   const typedReq = req as AuthenticatedRequest;
   try {
     const postId = typedReq.params.id;
-    const authorId = new ObjectId(typedReq.user._id);
 
-    const success = await deleteBlogPost(postId, authorId);
+    const success = await deleteBlogPost(postId);
     if (success) {
       res.status(200).json({ message: "Post deleted successfully" });
     } else {
