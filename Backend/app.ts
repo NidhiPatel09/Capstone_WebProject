@@ -3,7 +3,7 @@ import session from "express-session";
 import dotenv from "dotenv";
 import { initializePassport } from "./config/auth";
 import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRecipeRoutes";
+import userRoutes from "./routes/favoritesRoutes";
 import recipeRoutes from "./routes/recipeRoutes";
 import blogRoutes from "./routes/blogPostRoutes";
 import commentRoutes from "./routes/commentRoutes"; 

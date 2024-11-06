@@ -2,14 +2,12 @@ import { Application } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
-import {
-  createUser,
-  findUserById,
-  findUserByEmail,
-  findUserByFacebookId,
-  createUserWithFacebookId,
-  updateUserProfile
-} from "../models/userModel";
+import { updateUserProfile } from "../services/user/update/updateUserProfile";
+import { findUserByEmail } from "../services/user/find/findUserByEmail";
+import { findUserByFacebookId } from "../services/user/find/findUserByFacebookId";
+import { findUserById } from "../services/user/find/findUserById";
+import { createUserWithFacebookId } from "../services/user/create/createUserWithFacebookId";
+import { createUser } from "../services/user/create/createUser";
 import { getDB } from "../config/db";
 import { ObjectId } from "mongodb";
 import dotenv from "dotenv";
@@ -66,15 +64,23 @@ passport.use(
         const facebookId = profile.id;
         const displayName = profile.displayName;
         const profilePicture =
-          profile.photos && profile.photos[0] ? profile.photos[0].value : ""; 
+          profile.photos && profile.photos[0] ? profile.photos[0].value : "";
 
         // Find or create the user based on Facebook ID
         let user = await findUserByFacebookId(facebookId);
         if (!user) {
-          user = await createUserWithFacebookId(facebookId, displayName, profilePicture);
+          user = await createUserWithFacebookId(
+            facebookId,
+            displayName,
+            profilePicture
+          );
         } else {
           // Update the user's displayName and profilePicture in case they changed
-          await updateUserProfile(user._id?.toString() || "", displayName, profilePicture);
+          await updateUserProfile(
+            user._id?.toString() || "",
+            displayName,
+            profilePicture
+          );
           user.displayName = displayName;
           user.profilePicture = profilePicture;
         }
@@ -94,20 +100,22 @@ passport.use(
 
 passport.serializeUser((user: any, done) => {
   if (user && user._id) {
-    done(null, user._id.toString()); 
+    done(null, user._id.toString());
   } else {
-    done(new Error("User ID is missing"), null); 
+    done(new Error("User ID is missing"), null);
   }
 });
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await getDB().collection("users").findOne({ _id: new ObjectId(id) });
+    const user = await getDB()
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
 
     if (user) {
-      done(null, { ...user, _id: user._id.toString() }); 
+      done(null, { ...user, _id: user._id.toString() });
     } else {
-      done(null, false); 
+      done(null, false);
     }
   } catch (error) {
     done(error);
