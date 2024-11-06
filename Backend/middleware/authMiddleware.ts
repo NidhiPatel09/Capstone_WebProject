@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
+import { AuthenticatedRequest } from "../types/customTypes";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const authMiddleware: RequestHandler = (req, res, next) => {
+  const typedReq = req as AuthenticatedRequest;
+
   if (req.isAuthenticated && req.isAuthenticated()) {
+    typedReq.user = req.user!;
     return next();
   }
 

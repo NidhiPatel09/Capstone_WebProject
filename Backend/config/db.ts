@@ -1,8 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 
 let db: Db;
-let client: MongoClient; // Keep a reference to the MongoClient
-
+let client: MongoClient; 
 export const connectDB = async (): Promise<Db> => {
   client = new MongoClient(process.env.MONGODB_URI as string,);
 
@@ -20,7 +19,7 @@ export const getDB = (): Db => {
 };
 
 export const closeDB = async (): Promise<void> => {
-  if (client) { // Close the MongoClient instance, not Db
+  if (client) { 
     await client.close();
     console.log('MongoDB connection closed');
   }
