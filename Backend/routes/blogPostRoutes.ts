@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createPost } from "../controllers/blog/create/createPost";
-import { getPosts } from "../controllers/blog/get/getPosts";
-import { getPostById } from "../controllers/blog/get/getPostById";
-import { updatePost } from "../controllers/blog/update/updatePost";
-import { deletePost } from "../controllers/blog/delete/deletePost";
+import { createPost } from "../controllers/blog/createPost";
+import { getPosts } from "../controllers/blog/getPosts";
+import { getPostById } from "../controllers/blog/getPostById";
+import { updatePost } from "../controllers/blog/updatePost";
+import { deletePost } from "../controllers/blog/deletePost";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();

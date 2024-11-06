@@ -2,18 +2,17 @@ import { Application } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
-import { updateUserProfile } from "../services/user/update/updateUserProfile";
-import { findUserByEmail } from "../services/user/find/findUserByEmail";
-import { findUserByFacebookId } from "../services/user/find/findUserByFacebookId";
-import { findUserById } from "../services/user/find/findUserById";
-import { createUserWithFacebookId } from "../services/user/create/createUserWithFacebookId";
-import { createUser } from "../services/user/create/createUser";
+import { updateUserProfile } from "../services/user/updateUserProfile";
+import { findUserByEmail } from "../services/user/findUserByEmail";
+import { findUserByFacebookId } from "../services/user/findUserByFacebookId";
+import { findUserById } from "../services/user/findUserById";
+import { createUserWithFacebookId } from "../services/user/createUserWithFacebookId";
+import { createUser } from "../services/user/createUser";
 import { getDB } from "../config/db";
 import { ObjectId } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Configure Passport for Google Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -23,7 +22,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Find or create the user
         const email = profile.emails?.[0].value;
         if (email) {
           let user = await findUserByEmail(email);
@@ -31,8 +29,7 @@ passport.use(
             user = await createUser(email);
           }
 
-          // Check if _id exists before proceeding
-          if (user._id) {
+          if (user?._id) {
             return done(null, { ...user, _id: user._id.toString() });
           } else {
             return done(new Error("User ID is missing"), false);
@@ -60,7 +57,6 @@ passport.use(
       console.log("Profile Object:", profile);
 
       try {
-        // Extract profile data
         const facebookId = profile.id;
         const displayName = profile.displayName;
         const profilePicture =
@@ -75,7 +71,6 @@ passport.use(
             profilePicture
           );
         } else {
-          // Update the user's displayName and profilePicture in case they changed
           await updateUserProfile(
             user._id?.toString() || "",
             displayName,
@@ -122,7 +117,7 @@ passport.deserializeUser(async (id: string, done) => {
   }
 });
 
-// Initialize Passport for the app
+// Initialization
 export const initializePassport = (app: Application) => {
   app.use(passport.initialize());
   app.use(passport.session());

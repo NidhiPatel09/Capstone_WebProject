@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createComment } from "../controllers/comment/create/createComment";
-import { getComments } from "../controllers/comment/get/getComments";
+import { createComment } from "../controllers/comment/createComment";
+import { getComments } from "../controllers/comment/getComments";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();

@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { googleAuth } from "../controllers/auth/google/googleAuth";
-import { googleCallback } from "../controllers/auth/google/googleCallback";
-import { handleGoogleCallback } from "../controllers/auth/google/handleGoogleCallback";
-import { facebookAuth } from "../controllers/auth/facebook/facebookAuth";
-import { facebookCallback } from "../controllers/auth/facebook/facebookCallback";
-import { signup } from "../controllers/auth/signup/signup";
-import { login } from "../controllers/auth/login/login";
-import { logout } from "../controllers/auth/logout/logout";
+import {
+  googleAuth,
+  googleCallback,
+  handleGoogleCallback,
+} from "../controllers/auth/google";
+import { facebookAuth, facebookCallback } from "../controllers/auth/facebook";
+import { signup } from "../controllers/auth/signup";
+import { login } from "../controllers/auth/login";
+import { logout } from "../controllers/auth/logout";
 import { getCurrentUser } from "../controllers/auth/getCurrentUser";
 import { authMiddleware } from "../middleware/authMiddleware";
 

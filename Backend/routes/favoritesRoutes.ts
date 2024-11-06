@@ -1,9 +1,9 @@
 // routes/favoritesRoutes.ts
 
 import { Router } from "express";
-import { addFavoriteRecipe } from "../controllers/favorites/add/addFavoriteRecipe";
-import { removeFavoriteRecipe } from "../controllers/favorites/remove/removeFavoriteRecipe";
-import { getFavorites } from "../controllers/favorites/get/getFavorites";
+import { addFavoriteRecipe } from "../controllers/favorites/addFavoriteRecipe";
+import { removeFavoriteRecipe } from "../controllers/favorites/removeFavoriteRecipe";
+import { getFavorites } from "../controllers/favorites/getFavorites";
 
 const router = Router();
 

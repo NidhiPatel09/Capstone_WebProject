@@ -5,7 +5,6 @@ import { AuthenticatedRequest } from "../types/customTypes";
 export const authMiddleware: RequestHandler = (req, res, next) => {
   const typedReq = req as AuthenticatedRequest;
 
-  // Check for Passport-based session authentication
   if (req.isAuthenticated && req.isAuthenticated()) {
     typedReq.user = req.user!;
     return next();
@@ -16,8 +15,10 @@ export const authMiddleware: RequestHandler = (req, res, next) => {
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.split(" ")[1];
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
-      typedReq.user = { _id: decoded.id }; 
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+        id: string;
+      };
+      typedReq.user = { _id: decoded.id };
       return next();
     } catch (error) {
       return res.status(401).json({ message: "Invalid or expired token" });
