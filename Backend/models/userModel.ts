@@ -1,5 +1,6 @@
 import { getDB } from "../config/db";
 import { ObjectId } from "mongodb";
+import bcrypt from "bcrypt";
 
 // Updated User interface with optional fields
 export interface User {
@@ -9,14 +10,15 @@ export interface User {
   facebookId?: string; 
   displayName?: string; 
   profilePicture?: string; 
+  password?: string;
 }
 
 // Get the users collection from the DB
-const usersCollection = () => getDB().collection<User>("users");
+export const usersCollection = () => getDB().collection<User>("users");
 
-// Create a new user using email
-export const createUser = async (email: string): Promise<User> => {
-  const newUser: Omit<User, "_id"> = { email, favoriteRecipes: [] };
+// Create a new user with email and password
+export const createUser = async (email: string, password: string): Promise<User> => {
+  const newUser: Omit<User, "_id"> = { email, password, favoriteRecipes: [] };
   const result = await usersCollection().insertOne(newUser);
 
   // Fetch the inserted user to get the correct '_id'

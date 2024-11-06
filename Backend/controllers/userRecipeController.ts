@@ -1,9 +1,9 @@
-import { Response, RequestHandler } from "express";
+import { Response, Request } from "express";
 import { addRecipeToFavorites, removeRecipeFromFavorites, getFavoriteRecipes } from "../models/userModel";
 import { AuthenticatedRequest } from "../types/customTypes";
 
 // Controller for adding a recipe to favorites
-export const addFavoriteRecipe: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
+export const addFavoriteRecipe = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -13,15 +13,15 @@ export const addFavoriteRecipe: RequestHandler = async (req: AuthenticatedReques
     const recipeId = req.body.recipeId;
 
     await addRecipeToFavorites(userId, recipeId);
-    res.status(200).json({ message: "Recipe added to favorites!" });
+    return res.status(200).json({ message: "Recipe added to favorites!" });
   } catch (error) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(500).json({ message: errMessage });
+    return res.status(500).json({ message: errMessage });
   }
 };
 
 // Controller for removing a recipe from favorites
-export const removeFavoriteRecipe: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
+export const removeFavoriteRecipe = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -31,15 +31,15 @@ export const removeFavoriteRecipe: RequestHandler = async (req: AuthenticatedReq
     const recipeId = req.params.recipeId;
 
     await removeRecipeFromFavorites(userId, recipeId);
-    res.status(200).json({ message: "Recipe removed from favorites!" });
+    return res.status(200).json({ message: "Recipe removed from favorites!" });
   } catch (error) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(500).json({ message: errMessage });
+    return res.status(500).json({ message: errMessage });
   }
 };
 
 // Controller for retrieving a user's favorite recipes
-export const getFavorites: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
+export const getFavorites = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -47,9 +47,9 @@ export const getFavorites: RequestHandler = async (req: AuthenticatedRequest, re
 
     const userId = req.user._id.toString();
     const favoriteRecipes = await getFavoriteRecipes(userId);
-    res.status(200).json(favoriteRecipes);
+    return res.status(200).json(favoriteRecipes);
   } catch (error) {
     const errMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(500).json({ message: errMessage });
+    return res.status(500).json({ message: errMessage });
   }
 };
