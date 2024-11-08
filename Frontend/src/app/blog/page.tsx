@@ -27,7 +27,7 @@ export default function Blog() {
       </div>
 
       {/* Main Content */}
-      <div className="p-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className={`p-8 ${isLoggedIn ? 'flex justify-center' : 'grid grid-cols-1 lg:grid-cols-4 gap-8'}`}>
         {/* Sidebar Section */}
         {!isLoggedIn && (
           <aside className="bg-dark-100 p-6 rounded-lg shadow mb-8">
@@ -76,7 +76,7 @@ export default function Blog() {
         )}
 
         {/* Main Blog Section */}
-        <div className="lg:col-span-3 flex items-center justify-center">
+        <div className={`flex ${isLoggedIn ? 'flex-col items-center' : 'lg:col-span-3'}`}>
           {isLoggedIn ? (
             <div className="w-full">
               {/* My Collection Section */}
