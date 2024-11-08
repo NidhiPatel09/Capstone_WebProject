@@ -5,6 +5,12 @@ import { findUserByEmail } from "../../services/user/findUserByEmail";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({ message: "Email and password are required" });
+    return;
+  }
+
   try {
     const user = await findUserByEmail(email);
     if (!user) {
@@ -22,9 +28,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       expiresIn: "7d",
     });
 
-    const { password: _, ...userWithoutPassword } = user;
-
-    res.status(200).json({ token, user: userWithoutPassword });
+    // Send the token in the response
+    res.status(200).json({
+      message: "Login successful.",
+      token,
+    });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Error logging in" });

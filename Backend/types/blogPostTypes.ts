@@ -7,7 +7,7 @@ export interface BlogPost {
   ingredients: string;
   steps: string;
   servings: number;
-  authorId: ObjectId;
+  authorId: string;
   categories?: number[];
   publish: boolean;
   createdAt: Date;

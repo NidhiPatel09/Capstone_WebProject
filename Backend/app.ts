@@ -15,13 +15,13 @@ dotenv.config();
 const app: Application = express();
 const port = process.env.PORT || 5000;
 
-// cors fix
+// CORS middleware to allow cookies
 app.use(corsMiddleware);
 
 // Session middleware
 app.use(sessionMiddleware);
 
-// Initialize passport and session
+// Initialize Passport
 initializePassport(app);
 
 // Middleware to parse JSON
@@ -34,7 +34,7 @@ app.use("/api", recipeRoutes);
 app.use("/blog", blogRoutes);
 app.use("/comments", commentRoutes);
 
-// Connecting to MongoDB and start the server
+// Connect to MongoDB and start the server
 connectDB()
   .then(() => {
     app.listen(port, () => {
