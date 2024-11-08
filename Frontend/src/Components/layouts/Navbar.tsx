@@ -1,14 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+type User = {
+  displayName: string;
+  profilePicture: string;
+  email: string;  
+};
+
+type Route = {
+  name: string;
+  href: string;
+};
+
 export default function Navbar() {
-  // state for mobile menubar
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const pathName = usePathname();
-  const routes = [
+
+  const routes: Route[] = [
     { name: "HOME", href: "/" },
     { name: "ABOUT US", href: "/about-us" },
     { name: "RECIPES", href: "/recipe" },
@@ -18,6 +30,22 @@ export default function Navbar() {
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    // Fetch the current user from the API route
+    async function fetchUserSession() {
+      try {
+        const response = await fetch("/api/user/session");
+        const data = await response.json();
+        setUser(data.user || null);
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+      }
+    }
+
+    fetchUserSession();
+  }, []);
+
   return (
     <>
       <nav className="bg-black py-4">
@@ -34,39 +62,51 @@ export default function Navbar() {
           </Link>
 
           <ul className="hidden md:flex space-x-8 text-white font-bold text-lg">
-            {routes.map((link) => {
-              // showing active links based on current path
-              const { name, href } = link;
-              return (
-                <li key={name}>
-                  <Link
-                    href={href}
-                    className={
-                      pathName === href
-                        ? "text-green-500 hover:text-green-500 transition-colors"
-                        : "hover:text-green-500 transition-colors"
-                    }
-                  >
-                    {name}
-                  </Link>
-                </li>
-              );
-            })}
+            {routes.map(({ name, href }) => (
+              <li key={name}>
+                <Link
+                  href={href}
+                  className={
+                    pathName === href
+                      ? "text-green-500 hover:text-green-500 transition-colors"
+                      : "hover:text-green-500 transition-colors"
+                  }
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
           </ul>
 
-          <div className="hidden md:flex space-x-4 mr-10">
-            <Link
-              href="/sign-up"
-              className="bg-white text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
-            >
-              SIGN UP
-            </Link>
-            <Link
-              href="/sign-in"
-              className="bg-green-600 text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
-            >
-              LOGIN
-            </Link>
+          <div className="hidden md:flex items-center space-x-4 mr-10">
+            {!user ? (
+              <>
+                <Link
+                  href="/sign-up"
+                  className="bg-white text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
+                >
+                  SIGN UP
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="bg-green-600 text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
+                >
+                  LOGIN
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <span className="text-white font-bold">Welcome, {user.displayName || user.email}</span>
+                {/* <Image
+                  src={user.profilePicture}
+                  alt={`${user.displayName}'s profile picture`}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                /> */}
+                <Link href="http://localhost:4000/auth/logout">Logout</Link>
+              </div>
+            )}
           </div>
 
           <button
@@ -115,38 +155,18 @@ export default function Navbar() {
           </button>
         </div>
         <ul className="flex flex-col items-center space-y-6 text-white font-bold text-xl mt-6">
-          {routes.map((link) => {
-            const { name, href } = link;
-            return (
-              <li key={name}>
-                <Link
-                  href={href}
-                  className={pathName === href ? "text-green-500" : ""}
-                  onClick={toggleSidebar}
-                >
-                  {name}
-                </Link>
-              </li>
-            );
-          })}
+          {routes.map(({ name, href }) => (
+            <li key={name}>
+              <Link
+                href={href}
+                className={pathName === href ? "text-green-500" : ""}
+                onClick={toggleSidebar}
+              >
+                {name}
+              </Link>
+            </li>
+          ))}
         </ul>
-
-        <div className="flex flex-col items-center space-y-4 mt-6">
-          <Link
-            href="/sign-up"
-            className="bg-white text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
-            onClick={toggleSidebar}
-          >
-            SIGN UP
-          </Link>
-          <Link
-            href="/sign-in"
-            className="bg-green-600 text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
-            onClick={toggleSidebar}
-          >
-            LOGIN
-          </Link>
-        </div>
       </div>
     </>
   );
