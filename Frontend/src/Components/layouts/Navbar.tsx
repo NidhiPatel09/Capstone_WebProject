@@ -18,7 +18,6 @@ export default function Navbar() {
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
-
   return (
     <>
       <nav className="bg-black py-4">

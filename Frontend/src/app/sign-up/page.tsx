@@ -1,3 +1,6 @@
+import handleGoogleLogin from "@/actions/handleGoogleLogin";
+import registerUser from "@/actions/registerUser";
+import Form from "@/Components/Form";
 import React from "react";
 
 export default function SignUp() {
@@ -20,7 +23,7 @@ export default function SignUp() {
             Sign Up
           </h2>
 
-          <button className="flex items-center justify-center w-full mb-4 p-3 text-black border border-gray-300 rounded-lg hover:bg-gray-100">
+          <button onClick={handleGoogleLogin} className="flex items-center justify-center w-full mb-4 p-3 text-black border border-gray-300 rounded-lg hover:bg-gray-100">
             <svg
               className="w-5 h-5 mr-2"
               xmlns="http://www.w3.org/2000/svg"
@@ -52,52 +55,59 @@ export default function SignUp() {
             Sign up with Email
           </button>
 
-          <div className="flex gap-4 mb-4">
-            <div className="w-full">
+          <Form action={registerUser} successMsg="User Registered Successfully!">
+            <div className="flex gap-4 mb-4">
+              <div className="w-full">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter first name here..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter last name here..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+            </div>
+            <div className="mb-4">
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                First Name
+                Email ID
               </label>
               <input
-                type="text"
-                placeholder="Enter first name here..."
+                type="email"
+                name="email"
+                placeholder="Example.email@gmail.com"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
-            <div className="w-full">
+            <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Last Name
+                Password
               </label>
               <input
-                type="text"
-                placeholder="Enter last name here..."
+                type="password"
+                name="password"
+                placeholder="Enter at least 8 characters"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Email ID
-            </label>
-            <input
-              type="email"
-              placeholder="Example.email@gmail.com"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter at least 8 characters"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
 
-          <button className="w-full py-4 text-lg font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600">
-            Create an account
-          </button>
+            <button
+              type="submit"
+              className="w-full py-4 text-lg font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600"
+            >
+              Create an account
+            </button>
+          </Form>
         </div>
       </div>
     </div>

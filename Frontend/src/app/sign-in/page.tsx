@@ -1,12 +1,14 @@
-import React from 'react';
+import handleGoogleLogin from "@/actions/handleGoogleLogin";
+import loginUser from "@/actions/loginUser";
+import Form from "@/Components/Form";
+import React from "react";
 
 export default function Login() {
   return (
     <div className="flex h-screen bg-gray-100">
-
       <div
         className="w-1/2 bg-cover bg-center relative"
-        style={{ backgroundImage: `url("/images/signup.png")` }} 
+        style={{ backgroundImage: `url("/images/signup.png")` }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white">
@@ -17,9 +19,11 @@ export default function Login() {
 
       <div className="w-1/2 flex items-center justify-center p-10">
         <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">Login</h2>
+          <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">
+            Login
+          </h2>
 
-          <button className="flex items-center justify-center w-full mb-4 p-3 text-black border border-gray-300 rounded-lg hover:bg-gray-100">
+          <button onClick={handleGoogleLogin} className="flex items-center justify-center w-full mb-4 p-3 text-black border border-gray-300 rounded-lg hover:bg-gray-100">
             <svg
               className="w-5 h-5 mr-2"
               xmlns="http://www.w3.org/2000/svg"
@@ -51,21 +55,25 @@ export default function Login() {
             Sign in with Email
           </button>
 
-          <input
-            type="email"
-            placeholder="Example.email@gmail.com"
-            className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <input
-            type="password"
-            placeholder="Enter at least 8 characters"
-            className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          
-          {/* Login Button */}
-          <button className="w-full py-4 text-lg font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600">
-            Login
-          </button>
+          <Form action={loginUser} successMsg="User Logged In!">
+            <input
+              type="email"
+              name="email"
+              placeholder="Example.email@gmail.com"
+              className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter at least 8 characters"
+              className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+
+            {/* Login Button */}
+            <button className="w-full py-4 text-lg font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600">
+              Login
+            </button>
+          </Form>
         </div>
       </div>
     </div>
