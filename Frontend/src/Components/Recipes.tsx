@@ -13,13 +13,13 @@ interface Recipe {
 export default async function Recipes() {
   const recipe = await fetchRecipes();
   return (
-    <section className="py-16 bg-gray-100 pb-20">
+    <section className="pt-3 bg-gray-100">
       +
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-12">
+        <h1 className="text-4xl text-black font-bold text-center mb-12">
           Recipe Collections
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid px-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {recipe && recipe.length > 0
             ? recipe.map((recipe: Recipe, index: number) => {
                 const { title, link } = recipe;
@@ -34,7 +34,7 @@ export default async function Recipes() {
                       alt={title}
                     />
                     <div className="p-4 text-center">
-                      <h2 className="text-lg font-bold mb-2">{title}</h2>
+                      <h2 className="text-lg text-black font-bold mb-2">{title}</h2>
                       <p className="text-blue-700 underline text-sm mb-4">
                         <Link href={`https://${link}`}>
                           Check Out Full Recipe

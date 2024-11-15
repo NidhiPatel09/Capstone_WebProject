@@ -1,6 +1,6 @@
 export default function JoinUs() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 px-16 bg-white">
       <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between">
         <div className="lg:w-1/2 w-full mb-8 lg:mb-0">
           <img
