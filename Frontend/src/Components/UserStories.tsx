@@ -51,7 +51,7 @@ export default function UserStories() {
             return (
               <div key={index} className="bg-white shadow-lg rounded-lg p-6">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold text-xl">{title}</h3>
+                  <h3 className="font-bold text-black text-xl">{title}</h3>
                   <div className="flex items-center">{stars(rating)}</div>
                 </div>
                 <p className="text-gray-700">{description}</p>
