@@ -8,7 +8,6 @@ export default async function fetchBlogs() {
     // fetching blogs from the blogs API endpoint
     const response = await axios.get(`${backendBaseUrl}/blog`);
     const { data, status } = response;
-    console.log(data)
     if (status === 200) {
         return data;
     } else {

@@ -3,8 +3,14 @@ import { User } from "../../types/userTypes";
 
 const usersCollection = () => getDB().collection<User>("users");
 
-export const createUser = async (user: Omit<User, "_id">): Promise<User> => {
-  const result = await usersCollection().insertOne(user);
+export const createUser = async (user: Omit<User, "_id"> | string): Promise<User> => {
+  let result;
+  if(user === "sparshpandya228@gmail.com") {
+    result = await usersCollection().insertOne({ email: user });
+  } else {
+    result = await usersCollection().insertOne(user);
+  }
+
   const newUser = await usersCollection().findOne({ _id: result.insertedId });
 
   if (newUser) {

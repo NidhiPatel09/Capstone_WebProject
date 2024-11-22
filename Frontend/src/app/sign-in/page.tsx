@@ -95,7 +95,7 @@ export default function Login() {
           {errors === "Login successful." ? (
             <h4 className="text-center mb-3 text-green-600">{errors}</h4>
           ) : (
-            <h4 className="text-center mb-3 text-green-600">{errors}</h4>
+            <h4 className="text-center mb-3 text-red-600">{errors}</h4>
           )}
           <form onSubmit={handleSubmit}>
             <input

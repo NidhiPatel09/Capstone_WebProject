@@ -1,5 +1,5 @@
 import JoinUs from "@/Components/JoinUs";
-import Recipes from "@/Components/Recipes";
+import Recipes from "@/Components/recipes/Recipes";
 import UserStories from "@/Components/UserStories";
 
 export default function Home() {

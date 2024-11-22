@@ -38,4 +38,4 @@
       </button>
     </form>
   </div>
-</section>;
+</section>
