@@ -1,14 +1,14 @@
 import { getDB } from "../../config/db";
-import { BlogPost } from "../../types/blogPostTypes";
+import { BlogPostInput } from "../../types/blogPostTypes";
 
-const blogPostCollection = () => getDB().collection<BlogPost>("blogs");
+const blogPostCollection = () => getDB().collection<BlogPostInput>("blogs");
 
 export const createBlogPost = async (
-  postData: Omit<BlogPost, "_id" | "createdAt" | "updatedAt">
-): Promise<BlogPost> => {
-  const newPost: BlogPost = {
+  postData: Omit<BlogPostInput, "_id" | "createdAt" | "updatedAt">
+): Promise<BlogPostInput> => {
+  const newPost: BlogPostInput = {
     ...postData,
-    createdAt: new Date(),
+    publishedAt: new Date(),
     updatedAt: new Date(),
   };
 

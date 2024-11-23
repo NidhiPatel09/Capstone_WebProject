@@ -4,7 +4,7 @@ import { AuthenticatedRequest } from "../types/customTypes";
 
 export const authMiddleware: RequestHandler = (req, res, next) => {
   const typedReq = req as AuthenticatedRequest;
-
+  console.log(req.user)
   if (req.isAuthenticated && req.isAuthenticated()) {
     typedReq.user = req.user!;
     return next();

@@ -32,9 +32,7 @@ export default function RecipesPage() {
           </button>
         </div>
       </header>
-      <Recipes onViewRecipe={handleViewRecipe} recipeId={selectedRecipeId ? selectedRecipeId : ''} />
-      {/* when the id is not null, recipe details will be shown here */}
-      {selectedRecipeId && <RecipeDetails recipeId={selectedRecipeId} />}
+      <Recipes />
     </>
   );
 }

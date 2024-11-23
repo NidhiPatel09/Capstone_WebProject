@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import fetchRecipes from "@/actions/fetchRecipes";
 import fetchImagesForRecipes from "@/actions/fetchImagesForRecipes";
@@ -6,32 +7,28 @@ import Link from "next/link";
 import Recipe from "@/types/Recipe";
 import SearchByIngredients from "@/Components/recipes/SearchByIngredients";
 import { SkeletonLoader } from "../Loaders/SkeletonLoader";
+import RecipeDetails from "./RecipeDetails";
+import Modal from "../Modal";
 
-interface RecipesProps {
-  onViewRecipe?: (id: string) => void;
-  recipeId?: string;
-}
-
-export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
+export default function Recipes() {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
   const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch all recipes when the page first loads
     async function getRecipes() {
       try {
         const data = await fetchRecipes();
         setAllRecipes(data);
-        setDisplayedRecipes(data); // Initially display all recipes
+        setDisplayedRecipes(data);
 
-        // Fetch images for all recipes
         const images = await fetchImagesForRecipes(data);
 
-        // Mark images as not loaded initiallygit 
         const initialLoadingStates = Object.keys(images).reduce((acc, id) => {
-          acc[id] = false; // Initially mark all as not loaded
+          acc[id] = false;
           return acc;
         }, {} as { [key: string]: boolean });
 
@@ -55,7 +52,17 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
   };
 
   const handleImageLoad = (id: string) => {
-    setLoadingImages((prev) => ({ ...prev, [id]: true })); // Mark the image as loaded
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleViewRecipe = (id: string) => {
+    setSelectedRecipeId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRecipeId(null);
   };
 
   return (
@@ -79,7 +86,6 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                     key={_id}
                     className="bg-white shadow-lg rounded-lg overflow-hidden"
                   >
-                    {/* Show SkeletonLoader while the image is loading */}
                     {isLoading && (
                       <SkeletonLoader width={347.8} height={192} />
                     )}
@@ -90,7 +96,7 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                       }`}
                       src={imageUrl}
                       alt={title}
-                      onLoad={() => handleImageLoad(_id)} // Handle image load
+                      onLoad={() => handleImageLoad(_id)}
                     />
 
                     <div className="p-4 text-center">
@@ -102,15 +108,12 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                           Check Out Full Recipe
                         </Link>
                       </p>
-                      {/* Render button if the function prop and _id are provided */}
-                      {onViewRecipe && _id && (
-                        <button
-                          onClick={() => onViewRecipe(_id)}
-                          className="text-green-600 border-2 border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-12 py-2 rounded-md"
-                        >
-                          {recipeId === _id ? "Showing Recipe" : "View Recipe"}
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleViewRecipe(_id)}
+                        className="text-green-600 border-2 border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-12 py-2 rounded-md"
+                      >
+                        View Recipe
+                      </button>
                     </div>
                   </div>
                 );
@@ -118,6 +121,10 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
             : "No Recipes For Now! Please Check Again Later!"}
         </div>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        {selectedRecipeId && <RecipeDetails recipeId={selectedRecipeId} />}
+      </Modal>
     </section>
   );
 }

@@ -9,11 +9,11 @@ import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/", authMiddleware, createPost); // Create a post
+router.post("/create", authMiddleware, createPost); // Create a post
 router.get("/user", authMiddleware, getPostsByUserId); // Get posts by user ID
 router.get("/", getPosts); // Get all posts
 router.get("/:id", getPostById); // Get a post by ID
 router.put("/:id", authMiddleware, updatePost); // Update a post by ID
 router.delete("/:id", authMiddleware, deletePost); // Delete a post by ID
 
-export default router;
+export default router;
