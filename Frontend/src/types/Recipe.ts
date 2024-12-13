@@ -1,4 +1,5 @@
 export default interface Recipe {
+  directions: any;
   _id: string;
   title: string;
   description?: string;

@@ -14,6 +14,8 @@ type Route = {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
+  const [isReading, setIsReading] = useState(false);
   const pathName = usePathname();
 
   const routes: Route[] = [
@@ -24,20 +26,34 @@ export default function Navbar() {
     { name: "BLOG", href: "/blog" },
   ];
 
-  const protectedRoutes: Route[] = [{ name: "PROFILE", href: "/profile" }];
-
-  const adminRoutes: Route[] = [
-    { name: "MANAGE REQUESTS", href: "/admin/manage-requests" },
-  ];
-
   const toggleSidebar = () => setIsOpen(!isOpen);
 
+  const handleFontSizeChange = (size: "small" | "medium" | "large") => {
+    setFontSize(size);
+    document.documentElement.style.fontSize =
+      size === "small" ? "14px" : size === "medium" ? "16px" : "18px";
+  };
+
+  const handleReadAloud = () => {
+    if (isReading) {
+      window.speechSynthesis.cancel();
+      setIsReading(false);
+    } else {
+      const text = document.body.innerText;
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
+      window.speechSynthesis.speak(utterance);
+      setIsReading(true);
+
+      utterance.onend = () => {
+        setIsReading(false);
+      };
+    }
+  };
+
   useEffect(() => {
-    // Fetch the current user from the API route
     async function fetchUserSession() {
       const user = await userSession();
-      console.log(user);
-
       setUser(user || null);
     }
 
@@ -59,88 +75,96 @@ export default function Navbar() {
             />
           </Link>
 
+          {/* Desktop Navbar */}
           <ul className="hidden md:flex space-x-8 text-white font-bold text-lg">
-            {user && user?.role === "admin"
-              ? adminRoutes.map(({ name, href }) => (
-                  <li key={name}>
-                    <Link
-                      href={href}
-                      className={
-                        pathName === href
-                          ? "text-green-500 hover:text-green-500 transition-colors"
-                          : "hover:text-green-500 transition-colors"
-                      }
-                    >
-                      {name}
-                    </Link>
-                  </li>
-                ))
-              : routes.map(({ name, href }) => (
-                  <li key={name}>
-                    <Link
-                      href={href}
-                      className={
-                        pathName === href
-                          ? "text-green-500 hover:text-green-500 transition-colors"
-                          : "hover:text-green-500 transition-colors"
-                      }
-                    >
-                      {name}
-                    </Link>
-                  </li>
-                ))}
-            {user &&
-              protectedRoutes.map(({ name, href }) => {
-                return (
-                  <li key={name}>
-                    <Link
-                      href={href}
-                      className={
-                        pathName === href
-                          ? "text-green-500 hover:text-green-500 transition-colors"
-                          : "hover:text-green-500 transition-colors"
-                      }
-                    >
-                      {name}
-                    </Link>
-                  </li>
-                );
-              })}
+            {routes.map(({ name, href }) => (
+              <li key={name}>
+                <Link
+                  href={href}
+                  className={`${
+                    pathName === href
+                      ? "text-green-500"
+                      : "hover:text-green-500 transition-colors"
+                  }`}
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
           </ul>
 
-          <div className="hidden md:flex items-center space-x-4 mr-10">
-            {!user ? (
-              <>
-                <Link
-                  href="/sign-up"
-                  className="bg-white text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
-                >
-                  SIGN UP
-                </Link>
-                <Link
-                  href="/sign-in"
-                  className="bg-green-600 text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
-                >
-                  LOGIN
-                </Link>
-              </>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <span className="text-white font-bold">
-                  Welcome, {user.displayName || user.email}
-                </span>
-                {/* <Image
-                  src={user.profilePicture}
-                  alt={`${user.displayName}'s profile picture`}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                /> */}
-                <Link href="http://localhost:4000/auth/logout">Logout</Link>
-              </div>
-            )}
+          {/* Sign-Up/Login Section */}
+          <div className="hidden md:flex flex-col items-end space-y-2">
+            <div className="flex items-center space-x-4 m-4">
+              {!user ? (
+                <>
+                  <Link
+                    href="/sign-up"
+                    className="bg-white text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
+                  >
+                    SIGN UP
+                  </Link>
+                  <Link
+                    href="/sign-in"
+                    className="bg-green-600 text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
+                  >
+                    LOGIN
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <span className="text-white font-bold">
+                    Welcome, {user.displayName || user.email}
+                  </span>
+                  <Link href="http://localhost:4000/auth/logout">Logout</Link>
+                </div>
+              )}
+            </div>
+            <div className="flex space-x-2" style={{ margin: "5px 15px 5px 0" }}>
+              <button
+                onClick={() => handleFontSizeChange("small")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "small"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A-
+              </button>
+              <button
+                onClick={() => handleFontSizeChange("medium")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "medium"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A
+              </button>
+              <button
+                onClick={() => handleFontSizeChange("large")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "large"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A+
+              </button>
+              <button
+                onClick={handleReadAloud}
+                className={`px-4 py-2 rounded-lg font-semibold flex items-center space-x-2 ${
+                  isReading
+                    ? "bg-red-500 text-white shadow-lg hover:bg-red-600"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+              >
+                <span>{isReading ? "Stop" : "Read Aloud"}</span>
+              </button>
+            </div>
           </div>
 
+          {/* Mobile Hamburger Menu */}
           <button
             className="block md:hidden mx-3 text-white focus:outline-none"
             onClick={toggleSidebar}
@@ -161,45 +185,103 @@ export default function Navbar() {
             </svg>
           </button>
         </div>
-      </nav>
 
-      <div
-        className={`fixed inset-0 z-40 bg-black bg-opacity-90 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform md:hidden`}
-      >
-        <div className="flex justify-end p-4">
-          <button onClick={toggleSidebar} className="text-white">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+        {/* Sidebar for Mobile */}
+        <div
+          className={`fixed inset-y-0 left-0 bg-black text-white w-64 transform ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out z-50`}
+        >
+          <div className="flex justify-between items-center p-4">
+            <Image
+              layout="intrinsic"
+              height={0}
+              width={100}
+              src="https://res.cloudinary.com/dyof62lts/image/upload/v1728660974/RecipeLogo_dark_tfjrsz.png"
+              alt="Recipe Finder Logo"
+              className="h-12"
+            />
+            <button
+              onClick={toggleSidebar}
+              className="text-white focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        <ul className="flex flex-col items-center space-y-6 text-white font-bold text-xl mt-6">
-          {routes.map(({ name, href }) => (
-            <li key={name}>
-              <Link
-                href={href}
-                className={pathName === href ? "text-green-500" : ""}
-                onClick={toggleSidebar}
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                {name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <ul className="space-y-4 mt-8 px-4">
+            {routes.map(({ name, href }) => (
+              <li key={name}>
+                <Link
+                  href={href}
+                  className={`block ${
+                    pathName === href
+                      ? "text-green-500"
+                      : "hover:text-green-500 transition-colors"
+                  }`}
+                  onClick={toggleSidebar}
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
+            <div className="flex flex-col space-y-2 mt-6">
+              <button
+                onClick={() => handleFontSizeChange("small")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "small"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A-
+              </button>
+              <button
+                onClick={() => handleFontSizeChange("medium")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "medium"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A
+              </button>
+              <button
+                onClick={() => handleFontSizeChange("large")}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  fontSize === "large"
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-200 text-black hover:bg-green-100"
+                }`}
+              >
+                A+
+              </button>
+              <button
+                onClick={handleReadAloud}
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  isReading
+                    ? "bg-red-500 text-white shadow-lg hover:bg-red-600"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+              >
+                {isReading ? "Stop" : "Read Aloud"}
+              </button>
+            </div>
+          </ul>
+        </div>
+      </nav>
     </>
   );
 }

@@ -92,7 +92,7 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
             Directions
           </h2>
           <ol className="list-decimal list-inside bg-gray-100 p-4 rounded-md space-y-2">
-            {recipe.instructions.map((step, index) => (
+            {recipe.directions.map((step: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined, index: React.Key | null | undefined) => (
               <li key={index} className="text-gray-700">
                 {step}
               </li>
