@@ -16,7 +16,7 @@ export default function AboutUs() {
             alt="Nidhi"
             className="w-36 h-36 rounded-full mx-auto mb-4"
           />
-          <h3 className="text-lg font-semibold">Nidhi</h3>
+          <h3 className="text-xl text-black font-semibold">Nidhi</h3>
         </div>
         <div className="text-center">
           <img
@@ -24,7 +24,7 @@ export default function AboutUs() {
             alt="Karan"
             className="w-36 h-36 rounded-full mx-auto mb-4"
           />
-          <h3 className="text-lg font-semibold">Karan</h3>
+          <h3 className="text-xl text-black font-semibold">Karan</h3>
         </div>
         <div className="text-center">
           <img
@@ -32,7 +32,7 @@ export default function AboutUs() {
             alt="Sparsh"
             className="w-36 h-36 rounded-full mx-auto mb-4"
           />
-          <h3 className="text-lg font-semibold">Sparsh</h3>
+          <h3 className="text-xl text-black font-semibold">Sparsh</h3>
         </div>
       </div>
 

@@ -96,8 +96,8 @@ export default function Recipes() {
   };
 
   return (
-    <section className="py-16 bg-gray-100 pb-20">
-      <div className="container mx-auto px-4">
+    <section className="flex align-center py-16 bg-gray-100 pb-20">
+      <div className="container mx-10 px-4">
         <h1 className="text-4xl text-black font-bold text-center mb-12">
           Recipe Collections
         </h1>
