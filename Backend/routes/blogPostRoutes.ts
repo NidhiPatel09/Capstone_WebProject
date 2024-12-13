@@ -9,7 +9,11 @@ import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 
+<<<<<<< HEAD
 router.post("/create", createPost); // Create a post
+=======
+router.post("/create", authMiddleware, createPost); // Create a post
+>>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
 router.get("/user", authMiddleware, getPostsByUserId); // Get posts by user ID
 router.get("/", getPosts); // Get all posts
 router.get("/:id", getPostById); // Get a post by ID

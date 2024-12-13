@@ -4,6 +4,10 @@ import { AuthenticatedRequest } from "../types/customTypes";
 
 export const authMiddleware: RequestHandler = (req, res, next) => {
   const typedReq = req as AuthenticatedRequest;
+<<<<<<< HEAD
+=======
+  console.log(req.user)
+>>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
   if (req.isAuthenticated && req.isAuthenticated()) {
     typedReq.user = req.user!;
     return next();
