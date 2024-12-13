@@ -34,14 +34,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     // Return just the message and user details (excluding password)
     const { password: pwd, ...userWithoutPassword } = user;
     res.status(200).json({
       message: "Login successful.",
-      user: userWithoutPassword
+      token,
     });
   } catch (error) {
     console.error("Error during login:", error);

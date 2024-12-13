@@ -20,10 +20,14 @@ export default function Login() {
     e.preventDefault();
 
     const result = await loginUser(formData.email, formData.password);
+    document.cookie = `token=${result.token}; expires=${new Date(
+      Date.now() + 1000 * 60 * 60 * 24 * 7
+    ).toUTCString()}; path=/`;
+
     if (result) {
       const user = await userSession();
       console.log(user);
-      
+
       if (user && Object.keys(user).length > 0) {
         if (user?.role === "admin") {
           router.push("/admin/manage-requests");

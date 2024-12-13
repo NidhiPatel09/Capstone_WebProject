@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import userSession from "@/actions/userSession";
 import User from "@/types/User";
-
+import { parseCookies, destroyCookie } from "nookies";
 type Route = {
   name: string;
   href: string;
@@ -13,10 +13,13 @@ type Route = {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
+  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">(
+    "medium"
+  );
   const [isReading, setIsReading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const pathName = usePathname();
+  const router = useRouter();
 
   const routes: Route[] = [
     { name: "HOME", href: "/" },
@@ -27,6 +30,17 @@ export default function Navbar() {
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const handleLogout = async () => {
+    const cookies = parseCookies();
+
+    if (cookies["token"]) {
+      destroyCookie(null, "token", { path: "/" });
+      router.push("/login");
+    } else {
+      router.push("http://localhost:4000/auth/logout");
+    }
+  };
 
   const handleFontSizeChange = (size: "small" | "medium" | "large") => {
     setFontSize(size);
@@ -54,6 +68,8 @@ export default function Navbar() {
   useEffect(() => {
     async function fetchUserSession() {
       const user = await userSession();
+      console.log(user, "userrrrrrrrrrr");
+
       setUser(user || null);
     }
 
@@ -116,11 +132,19 @@ export default function Navbar() {
                   <span className="text-white font-bold">
                     Welcome, {user.displayName || user.email}
                   </span>
-                  <Link href="http://localhost:4000/auth/logout">Logout</Link>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md font-bold hover:bg-red-600 transition-colors"
+                  >
+                    Logout
+                  </button>{" "}
                 </div>
               )}
             </div>
-            <div className="flex space-x-2" style={{ margin: "5px 15px 5px 0" }}>
+            <div
+              className="flex space-x-2"
+              style={{ margin: "5px 15px 5px 0" }}
+            >
               <button
                 onClick={() => handleFontSizeChange("small")}
                 className={`px-3 py-2 rounded-lg font-semibold ${
