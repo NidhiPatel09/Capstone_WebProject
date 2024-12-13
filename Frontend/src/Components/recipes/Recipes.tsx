@@ -9,46 +9,30 @@ import SearchByIngredients from "@/Components/recipes/SearchByIngredients";
 import { SkeletonLoader } from "../Loaders/SkeletonLoader";
 import RecipeDetails from "./RecipeDetails";
 import Modal from "../Modal";
-<<<<<<< HEAD
 import addFavoriteRecipe from "@/actions/addFavoriteRecipe";
 import userSession from "@/actions/userSession";
 import User from "@/types/User";
 import deleteFavoriteRecipe from "@/actions/deleteFavoriteRecipe";
-=======
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
 
 export default function Recipes() {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
-<<<<<<< HEAD
-  const [loadingImages, setLoadingImages] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const [user, setUser] = useState<User | null>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean | null>();
-=======
-  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
+  // Fetch recipes and images
   useEffect(() => {
     async function getRecipes() {
       try {
         const data = await fetchRecipes();
-<<<<<<< HEAD
-
         setAllRecipes(data);
         setDisplayedRecipes(data);
 
-=======
-        setAllRecipes(data);
-        setDisplayedRecipes(data);
-
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
         const images = await fetchImagesForRecipes(data);
 
         const initialLoadingStates = Object.keys(images).reduce((acc, id) => {
@@ -64,26 +48,17 @@ export default function Recipes() {
     }
 
     async function fetchUserSession() {
-      const user = await userSession();
-      console.log(user);
-
-      setUser(user || null);
+      try {
+        const user = await userSession();
+        setUser(user || null);
+      } catch (error) {
+        console.error("Failed to fetch user session:", error);
+      }
     }
 
-    fetchUserSession();
     getRecipes();
-  }, []);
-
-  useEffect(() => {
-    async function fetchUserSession() {
-      const user = await userSession();
-      console.log(user);
-
-      setUser(user || null);
-    }
-
     fetchUserSession();
-  }, [isFavorite])
+  }, []);
 
   const handleSearchResults = async (results: Recipe[] | null) => {
     if (results && results.length > 0) {
@@ -107,19 +82,17 @@ export default function Recipes() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedRecipeId(null);
-<<<<<<< HEAD
   };
 
   const toggleFavorite = async (recipeId: string) => {
     if (user?.favoriteRecipes.includes(recipeId)) {
       await deleteFavoriteRecipe(recipeId);
-      setIsFavorite(false);
     } else {
       await addFavoriteRecipe(recipeId);
-      setIsFavorite(true);
     }
-=======
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
+    // Refresh user session after toggling favorite
+    const updatedUser = await userSession();
+    setUser(updatedUser || null);
   };
 
   return (
@@ -132,74 +105,61 @@ export default function Recipes() {
         <SearchByIngredients onResults={handleSearchResults} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
-          {displayedRecipes && displayedRecipes.length > 0
-            ? displayedRecipes.map((recipe: Recipe) => {
-                const { _id, title, link } = recipe;
-                const imageUrl = imageUrls[_id];
-                const isLoading = !loadingImages[_id];
+          {displayedRecipes && displayedRecipes.length > 0 ? (
+            displayedRecipes.map((recipe: Recipe) => {
+              const { _id, title, link } = recipe;
+              const imageUrl = imageUrls[_id];
+              const isLoading = !loadingImages[_id];
 
-                return (
-                  <div
-                    key={_id}
-                    className="bg-white shadow-lg rounded-lg overflow-hidden"
-                  >
-<<<<<<< HEAD
-                    {isLoading && <SkeletonLoader width={347.8} height={192} />}
-=======
-                    {isLoading && (
-                      <SkeletonLoader width={347.8} height={192} />
-                    )}
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
+              return (
+                <div
+                  key={_id}
+                  className="bg-white shadow-lg rounded-lg overflow-hidden"
+                >
+                  {isLoading && <SkeletonLoader width={347.8} height={192} />}
 
-                    <img
-                      className={`w-full h-48 object-cover ${
-                        isLoading ? "hidden" : ""
-                      }`}
-                      src={imageUrl}
-                      alt={title}
-                      onLoad={() => handleImageLoad(_id)}
-                    />
+                  <img
+                    className={`w-full h-48 object-cover ${
+                      isLoading ? "hidden" : ""
+                    }`}
+                    src={imageUrl}
+                    alt={title}
+                    onLoad={() => handleImageLoad(_id)}
+                  />
 
-                    <div className="p-4 text-center">
-                      <h2 className="text-lg text-black font-bold mb-2">
-                        {title}
-                      </h2>
-                      <p className="text-blue-700 underline text-sm mb-4">
-                        <Link href={`https://${link}`}>
-                          Check Out Full Recipe
-                        </Link>
-                      </p>
-<<<<<<< HEAD
-                      <div className="flex justify-center items-center space-x-4">
-                        <button
-                          onClick={() => handleViewRecipe(_id)}
-                          className="text-green-600 border-2 border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-12 py-2 rounded-md"
-                        >
-                          View Recipe
-                        </button>
-                        {user && Object.keys(user).length > 0 && (
-                          <button
-                            onClick={() => toggleFavorite(_id)}
-                            className="text-green-600 border border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md"
-                            aria-label="Toggle favorite"
-                          >
-                            {user.favoriteRecipes.includes(_id) ? "💚" : "🤍"}
-                          </button>
-                        )}
-                      </div>
-=======
+                  <div className="p-4 text-center">
+                    <h2 className="text-lg text-black font-bold mb-2">
+                      {title}
+                    </h2>
+                    <p className="text-blue-700 underline text-sm mb-4">
+                      <Link href={`https://${link}`} target="_blank">
+                        Check Out Full Recipe
+                      </Link>
+                    </p>
+                    <div className="flex justify-center items-center space-x-4">
                       <button
                         onClick={() => handleViewRecipe(_id)}
                         className="text-green-600 border-2 border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-12 py-2 rounded-md"
                       >
                         View Recipe
                       </button>
->>>>>>> ff6026db5118d2a4e30addfccd7699e7e97e1076
+                      {user && (
+                        <button
+                          onClick={() => toggleFavorite(_id)}
+                          className="text-green-600 border border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md"
+                          aria-label="Toggle favorite"
+                        >
+                          {user.favoriteRecipes.includes(_id) ? "💚" : "🤍"}
+                        </button>
+                      )}
                     </div>
                   </div>
-                );
-              })
-            : "No Recipes For Now! Please Check Again Later!"}
+                </div>
+              );
+            })
+          ) : (
+            <p>No Recipes For Now! Please Check Again Later!</p>
+          )}
         </div>
       </div>
 

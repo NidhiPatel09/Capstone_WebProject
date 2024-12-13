@@ -11,6 +11,8 @@ export default async function fetchRecipes() {
     // fetching recipes from the recipes api endpoint
     const response = await axios.get(`${backendBaseUrl}/api/recipes`);
     const { data, status } = response;
+    console.log(data);
+    
     if(status === 200) {
         return data;
     }

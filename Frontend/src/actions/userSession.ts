@@ -29,6 +29,8 @@ export default async function userSession() {
       return null;
     }
   } catch (error: any) {
+    console.log(error);
+    
     console.error("Error fetching user session:", error.message || error);
     return null;
   }
