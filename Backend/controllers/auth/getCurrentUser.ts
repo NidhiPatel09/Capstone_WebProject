@@ -26,7 +26,7 @@ export const getCurrentUser = async (
     // Exclude sensitive information like password
     const { password, ...userWithoutPassword } = user;
 
-    res.status(200).json({
+    res.status(200).json({  
       user: userWithoutPassword,
       message: "Authenticated user details retrieved successfully.",
     });

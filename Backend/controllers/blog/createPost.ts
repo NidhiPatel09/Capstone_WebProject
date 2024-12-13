@@ -8,34 +8,27 @@ export const createPost = async (
 ): Promise<void> => {
   const typedReq = req as AuthenticatedRequest;
 
-  // Retrieve `authorId` from the authenticated user
-  const authorId = typedReq.user?._id;
-
-  // Validation: Ensure `authorId` exists
-  if (!authorId) {
-    res.status(401).json({ message: "Unauthorized: User ID not found" });
-    return;
-  }
-
   // Destructure and validate required fields from the request body
-  const { title, description, ingredients, steps, servings, publish } =
+  const { title, description, image, readingTime, authorId, categoryId } =
     typedReq.body;
 
   // Validation: Check if all required fields are provided
   if (
     !title ||
     !description ||
-    !ingredients ||
-    !steps ||
-    servings === undefined ||
-    publish === undefined
+    !categoryId ||
+    readingTime === undefined
   ) {
-    res
-      .status(400)
-      .json({
-        message:
-          "All fields (title, description, ingredients, steps, servings, publish) are required",
-      });
+    console.log(
+      title,
+      description,
+      categoryId,
+      readingTime
+    );
+    res.status(400).json({
+      message:
+        "All fields (title, description, categoryid, readingtime, publishedat) are required",
+    });
     return;
   }
 
@@ -45,18 +38,15 @@ export const createPost = async (
       title,
       description,
       authorId,
-      ingredients,
-      steps,
-      servings,
-      publish,
+      categoryId,
+      readingTime,
     });
-
-    res.status(201).json(newPost);
+    res.status(201).json({newPost, message: 'Post Created Successfully!'});
   } catch (error) {
     console.error("Error creating blog post:", error);
     res.status(500).json({
       message: "Error creating blog post",
       error: error instanceof Error ? error.message : error,
-    });
-  }
+    });
+  }
 };

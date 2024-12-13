@@ -14,6 +14,7 @@ export const addFavoriteRecipe = async (
 
     const userId = typedReq.user._id.toString();
     const recipeId = typedReq.body.recipeId;
+    
 
     await addRecipeToFavorites(userId, recipeId);
     return res.status(200).json({ message: "Recipe added to favorites!" });

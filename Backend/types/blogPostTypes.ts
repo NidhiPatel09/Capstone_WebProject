@@ -13,3 +13,15 @@ export interface BlogPost {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface BlogPostInput {
+  _id?: ObjectId;
+  authorId: String;
+  categoryId?: ObjectId;
+  title: string;
+  description: string;
+  image?: string;
+  publishedAt?: Date;
+  updatedAt?: Date;
+  readingTime?: string;
+}

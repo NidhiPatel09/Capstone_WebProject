@@ -4,7 +4,6 @@ import { AuthenticatedRequest } from "../types/customTypes";
 
 export const authMiddleware: RequestHandler = (req, res, next) => {
   const typedReq = req as AuthenticatedRequest;
-
   if (req.isAuthenticated && req.isAuthenticated()) {
     typedReq.user = req.user!;
     return next();
@@ -27,4 +26,21 @@ export const authMiddleware: RequestHandler = (req, res, next) => {
 
   // If neither authentication method succeeds, respond with 401
   res.status(401).json({ message: "Unauthorized. Please log in." });
+};
+
+export const adminMiddleware: RequestHandler = async (req, res, next) => {
+  const typedReq = req as AuthenticatedRequest;
+
+  // Ensure user is authenticated
+  if (!typedReq.user) {
+    return res.status(403).json({ message: "Access denied. User not authenticated." });
+  }
+
+  // Check if the user has an admin role
+  if (typedReq.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+
+  // Proceed if the user is an admin
+  next();
 };

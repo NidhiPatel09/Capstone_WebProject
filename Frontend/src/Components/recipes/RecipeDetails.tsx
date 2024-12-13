@@ -1,4 +1,5 @@
 "use client";
+
 import fetchRecipeById from "@/actions/fetchRecipeById";
 import fetchImagesForRecipeDetails from "@/actions/fetchImagesForRecipeDetails";
 import Recipe from "@/types/Recipe";
@@ -11,21 +12,24 @@ interface RecipeDetailsProps {
 export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch recipe details and image
     async function getRecipeDetails() {
       if (recipeId) {
         try {
-          // Fetch recipe by ID
           const data = await fetchRecipeById(recipeId);
           setRecipe(data);
 
-          // Fetch image URL for the recipe
           const images = await fetchImagesForRecipeDetails(data);
-          setImageUrl(images[data._id] || "https://res.cloudinary.com/dyof62lts/image/upload/v1728660976/step2_iuqabp.png"); // Fallback placeholder
+          setImageUrl(
+            images[data._id] ||
+              "https://res.cloudinary.com/dyof62lts/image/upload/v1728660976/step2_iuqabp.png"
+          );
         } catch (error) {
           console.error("Failed to fetch recipe details or image:", error);
+        } finally {
+          setIsLoading(false);
         }
       }
     }
@@ -33,8 +37,21 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
     getRecipeDetails();
   }, [recipeId]);
 
-  // Return null if recipe ID is not provided or recipe details are not loaded
-  if (!recipeId || !recipe) return null;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-500">Loading recipe details...</p>
+      </div>
+    );
+  }
+
+  if (!recipe) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-500">Recipe not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="recipe-details p-6 bg-white shadow-md rounded-md">
@@ -43,7 +60,6 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
           {recipe.title}
         </h1>
 
-        {/* Large Image */}
         {imageUrl && (
           <div className="mb-8 flex justify-center items-center">
             <img
@@ -58,7 +74,6 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
           <strong>Source:</strong> {recipe.source}
         </p>
 
-        {/* Ingredients Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-green-600 mb-4">
             Ingredients
@@ -72,13 +87,12 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
           </ul>
         </div>
 
-        {/* Directions Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-green-600 mb-4">
             Directions
           </h2>
           <ol className="list-decimal list-inside bg-gray-100 p-4 rounded-md space-y-2">
-            {recipe.directions.map((step, index) => (
+            {recipe.instructions.map((step, index) => (
               <li key={index} className="text-gray-700">
                 {step}
               </li>
@@ -86,7 +100,6 @@ export default function RecipeDetails({ recipeId }: RecipeDetailsProps) {
           </ol>
         </div>
 
-        {/* Link to Full Recipe */}
         <div className="text-center">
           <a
             href={`https://${recipe.link}`}

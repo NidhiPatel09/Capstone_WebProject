@@ -1,11 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { handleGoogleLogin, handleFacebookLogin } from "@/actions/handleLogin";
 import loginUser from "@/actions/loginUser";
-
+import User from "@/types/User";
+import userSession from "@/actions/userSession";
+import { useRouter } from "next/navigation";
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<string>("");
+  const [user, setUser] = useState<User | null>();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -16,7 +20,18 @@ export default function Login() {
     e.preventDefault();
 
     const result = await loginUser(formData.email, formData.password);
-    console.log(result);
+    if (result) {
+      const user = await userSession();
+      console.log(user);
+      
+      if (user && Object.keys(user).length > 0) {
+        if (user?.role === "admin") {
+          router.push("/admin/manage-requests");
+        } else {
+          router.push("/");
+        }
+      }
+    }
 
     if (result?.message) {
       setErrors(result.message);

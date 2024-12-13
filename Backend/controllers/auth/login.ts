@@ -1,3 +1,4 @@
+// login.ts (Backend)
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -28,10 +29,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       expiresIn: "7d",
     });
 
-    // Send the token in the response
+    // Set the token as an HttpOnly cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Return just the message and user details (excluding password)
+    const { password: pwd, ...userWithoutPassword } = user;
     res.status(200).json({
       message: "Login successful.",
-      token,
+      user: userWithoutPassword
     });
   } catch (error) {
     console.error("Error during login:", error);

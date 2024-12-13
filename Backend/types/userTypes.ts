@@ -8,4 +8,5 @@ export interface User {
   displayName?: string;
   profilePicture?: string;
   password?: string;
+  role?: string;
 }

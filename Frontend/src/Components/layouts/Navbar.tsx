@@ -3,12 +3,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-type User = {
-  displayName: string;
-  profilePicture: string;
-  email: string;  
-};
+import userSession from "@/actions/userSession";
+import User from "@/types/User";
 
 type Route = {
   name: string;
@@ -26,7 +22,12 @@ export default function Navbar() {
     { name: "RECIPES", href: "/recipe" },
     { name: "CONTACT US", href: "/contact-us" },
     { name: "BLOG", href: "/blog" },
-    { name: "PROFILE", href: "/profile" },
+  ];
+
+  const protectedRoutes: Route[] = [{ name: "PROFILE", href: "/profile" }];
+
+  const adminRoutes: Route[] = [
+    { name: "MANAGE REQUESTS", href: "/admin/manage-requests" },
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -34,13 +35,10 @@ export default function Navbar() {
   useEffect(() => {
     // Fetch the current user from the API route
     async function fetchUserSession() {
-      try {
-        const response = await fetch("/api/user/session");
-        const data = await response.json();
-        setUser(data.user || null);
-      } catch (error) {
-        console.error("Error fetching user session:", error);
-      }
+      const user = await userSession();
+      console.log(user);
+
+      setUser(user || null);
     }
 
     fetchUserSession();
@@ -62,20 +60,52 @@ export default function Navbar() {
           </Link>
 
           <ul className="hidden md:flex space-x-8 text-white font-bold text-lg">
-            {routes.map(({ name, href }) => (
-              <li key={name}>
-                <Link
-                  href={href}
-                  className={
-                    pathName === href
-                      ? "text-green-500 hover:text-green-500 transition-colors"
-                      : "hover:text-green-500 transition-colors"
-                  }
-                >
-                  {name}
-                </Link>
-              </li>
-            ))}
+            {user && user?.role === "admin"
+              ? adminRoutes.map(({ name, href }) => (
+                  <li key={name}>
+                    <Link
+                      href={href}
+                      className={
+                        pathName === href
+                          ? "text-green-500 hover:text-green-500 transition-colors"
+                          : "hover:text-green-500 transition-colors"
+                      }
+                    >
+                      {name}
+                    </Link>
+                  </li>
+                ))
+              : routes.map(({ name, href }) => (
+                  <li key={name}>
+                    <Link
+                      href={href}
+                      className={
+                        pathName === href
+                          ? "text-green-500 hover:text-green-500 transition-colors"
+                          : "hover:text-green-500 transition-colors"
+                      }
+                    >
+                      {name}
+                    </Link>
+                  </li>
+                ))}
+            {user &&
+              protectedRoutes.map(({ name, href }) => {
+                return (
+                  <li key={name}>
+                    <Link
+                      href={href}
+                      className={
+                        pathName === href
+                          ? "text-green-500 hover:text-green-500 transition-colors"
+                          : "hover:text-green-500 transition-colors"
+                      }
+                    >
+                      {name}
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
 
           <div className="hidden md:flex items-center space-x-4 mr-10">
@@ -96,7 +126,9 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <span className="text-white font-bold">Welcome, {user.displayName || user.email}</span>
+                <span className="text-white font-bold">
+                  Welcome, {user.displayName || user.email}
+                </span>
                 {/* <Image
                   src={user.profilePicture}
                   alt={`${user.displayName}'s profile picture`}

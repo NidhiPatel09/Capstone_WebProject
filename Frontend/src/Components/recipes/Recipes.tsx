@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import fetchRecipes from "@/actions/fetchRecipes";
 import fetchImagesForRecipes from "@/actions/fetchImagesForRecipes";
@@ -6,32 +7,36 @@ import Link from "next/link";
 import Recipe from "@/types/Recipe";
 import SearchByIngredients from "@/Components/recipes/SearchByIngredients";
 import { SkeletonLoader } from "../Loaders/SkeletonLoader";
+import RecipeDetails from "./RecipeDetails";
+import Modal from "../Modal";
+import addFavoriteRecipe from "@/actions/addFavoriteRecipe";
+import userSession from "@/actions/userSession";
+import User from "@/types/User";
+import deleteFavoriteRecipe from "@/actions/deleteFavoriteRecipe";
 
-interface RecipesProps {
-  onViewRecipe?: (id: string) => void;
-  recipeId?: string;
-}
-
-export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
+export default function Recipes() {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
-  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
-
+  const [loadingImages, setLoadingImages] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean | null>();
   useEffect(() => {
-    // Fetch all recipes when the page first loads
     async function getRecipes() {
       try {
         const data = await fetchRecipes();
-        setAllRecipes(data);
-        setDisplayedRecipes(data); // Initially display all recipes
 
-        // Fetch images for all recipes
+        setAllRecipes(data);
+        setDisplayedRecipes(data);
+
         const images = await fetchImagesForRecipes(data);
 
-        // Mark images as not loaded initiallygit 
         const initialLoadingStates = Object.keys(images).reduce((acc, id) => {
-          acc[id] = false; // Initially mark all as not loaded
+          acc[id] = false;
           return acc;
         }, {} as { [key: string]: boolean });
 
@@ -41,8 +46,28 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
         console.error("Failed to fetch recipes:", error);
       }
     }
+
+    async function fetchUserSession() {
+      const user = await userSession();
+      console.log(user);
+
+      setUser(user || null);
+    }
+
+    fetchUserSession();
     getRecipes();
   }, []);
+
+  useEffect(() => {
+    async function fetchUserSession() {
+      const user = await userSession();
+      console.log(user);
+
+      setUser(user || null);
+    }
+
+    fetchUserSession();
+  }, [isFavorite])
 
   const handleSearchResults = async (results: Recipe[] | null) => {
     if (results && results.length > 0) {
@@ -55,7 +80,27 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
   };
 
   const handleImageLoad = (id: string) => {
-    setLoadingImages((prev) => ({ ...prev, [id]: true })); // Mark the image as loaded
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleViewRecipe = (id: string) => {
+    setSelectedRecipeId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRecipeId(null);
+  };
+
+  const toggleFavorite = async (recipeId: string) => {
+    if (user?.favoriteRecipes.includes(recipeId)) {
+      await deleteFavoriteRecipe(recipeId);
+      setIsFavorite(false);
+    } else {
+      await addFavoriteRecipe(recipeId);
+      setIsFavorite(true);
+    }
   };
 
   return (
@@ -79,10 +124,7 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                     key={_id}
                     className="bg-white shadow-lg rounded-lg overflow-hidden"
                   >
-                    {/* Show SkeletonLoader while the image is loading */}
-                    {isLoading && (
-                      <SkeletonLoader width={347.8} height={192} />
-                    )}
+                    {isLoading && <SkeletonLoader width={347.8} height={192} />}
 
                     <img
                       className={`w-full h-48 object-cover ${
@@ -90,7 +132,7 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                       }`}
                       src={imageUrl}
                       alt={title}
-                      onLoad={() => handleImageLoad(_id)} // Handle image load
+                      onLoad={() => handleImageLoad(_id)}
                     />
 
                     <div className="p-4 text-center">
@@ -102,15 +144,23 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
                           Check Out Full Recipe
                         </Link>
                       </p>
-                      {/* Render button if the function prop and _id are provided */}
-                      {onViewRecipe && _id && (
+                      <div className="flex justify-center items-center space-x-4">
                         <button
-                          onClick={() => onViewRecipe(_id)}
+                          onClick={() => handleViewRecipe(_id)}
                           className="text-green-600 border-2 border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-12 py-2 rounded-md"
                         >
-                          {recipeId === _id ? "Showing Recipe" : "View Recipe"}
+                          View Recipe
                         </button>
-                      )}
+                        {user && Object.keys(user).length > 0 && (
+                          <button
+                            onClick={() => toggleFavorite(_id)}
+                            className="text-green-600 border border-green-600 hover:bg-green-600 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md"
+                            aria-label="Toggle favorite"
+                          >
+                            {user.favoriteRecipes.includes(_id) ? "💚" : "🤍"}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -118,6 +168,10 @@ export default function Recipes({ onViewRecipe, recipeId }: RecipesProps) {
             : "No Recipes For Now! Please Check Again Later!"}
         </div>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        {selectedRecipeId && <RecipeDetails recipeId={selectedRecipeId} />}
+      </Modal>
     </section>
   );
 }

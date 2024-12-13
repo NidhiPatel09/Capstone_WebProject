@@ -6,6 +6,7 @@ import {
   TwitterIcon,
   TwitterShareButton,
 } from "next-share";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -31,6 +32,7 @@ export default function Footer() {
       </TwitterShareButton>
     </div>
     <div className="text-center">
+      <p>Images Provided By <Link href='https://pixabay.com/'>Pixabay</Link></p>
       <p>Follow us on Internet</p>
       <p className="text-sm">
         Developed by Nidhi, Sparsh & Karan <br />© 2024 RecipeFinder
