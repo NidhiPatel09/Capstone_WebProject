@@ -116,7 +116,7 @@ export default function Blog() {
                 <h2 className="text-m mt-2 mb-2 font-bold">Published On</h2>
                 <p className="text-sm text-gray-400">{selectedBlog.PublishedAt ? selectedBlog.PublishedAt.toDateString() : 'No Date Specified'}</p>
                 <button className="group relative w-full flex justify-center mt-4 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-white hover:bg-green-600 hover:text-white">
-                  <a href="/sign-up">Add to Collection</a>
+                Add to Collection
                 </button>
               </div>
             </div>

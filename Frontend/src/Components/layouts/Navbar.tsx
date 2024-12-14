@@ -302,6 +302,34 @@ export default function Navbar() {
               >
                 {isReading ? "Stop" : "Read Aloud"}
               </button>
+              {!user ? (
+              <>
+                <Link
+                  href="/sign-up"
+                  className="bg-white text-center text-black px-6 py-2 rounded-md font-bold hover:bg-green-500 hover:text-white transition-colors"
+                >
+                  SIGN UP
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="bg-green-600 text-center text-white px-6 py-2 rounded-md font-bold hover:bg-green-500 transition-colors"
+                >
+                  LOGIN
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <span className="text-white font-bold">
+                  Welcome, {user.displayName || user.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md font-bold hover:bg-red-600 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
             </div>
           </ul>
         </div>
